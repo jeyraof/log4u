@@ -10,13 +10,9 @@ import string
 config = {
     'HOST': "irc.ozinger.org",  # Host of irc server
     'PORT': 6667,  # Port to connection
-    'IDEN': "jaeyounglee",  # Identity
-    'REAL': "jaeyoung lee",  # Real name
-    'NICK': "jybot",  # Nick name
-    'CHAN': [],  # Auto join channel list (add prefix '#' to channel name)
-    'NSRV': "Nickserv",  # Nick service bot Nick name
-    'NSID': "",  # Nick service auth ID
-    'NPWD': "",  # Nick service auth Password
+    'IDEN': "beautifuljy",  # Identity
+    'REAL': "powerful jy",  # Real name
+    'NICK': "be4utyfu1",  # Nick name
 }
 
 
@@ -53,10 +49,6 @@ def run():
                     for chan in config['CHAN']:
                         s.send("JOIN %s\r\n" % chan)
 
-                    if len(config['NPWD']) > 0:  # When Auth service config was set
-                        s.send("PRIVMSG %s :IDENTIFY %s %s \r\n" % (config['NSRV'],
-                                                                    config['NSID'],
-                                                                    config['NPWD']))
                     flag = False  # Loop break
 
         # Operate whenever socket received
