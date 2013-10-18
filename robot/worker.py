@@ -2,6 +2,7 @@
 
 from database import Session, Channel, Log, Link
 from datetime import datetime
+from urlparse import urlparse
 
 import socket
 import string
@@ -19,6 +20,7 @@ config = {
 def run():
     channels = Session.query(Channel).all()
     channel_map = {}
+    config['CHAN'] = []
     for channel in channels:
         config['CHAN'].append(channel.name)
         channel_map[channel.name] = channel.id
@@ -79,6 +81,13 @@ def run():
                         log = Log(sender, channel_map[obj], msg, datetime.now())
                         Session.add(log)
                         Session.commit()
+
+                        for m in msg.split(' '):
+                            tmp = urlparse(m)
+                            if tmp.scheme in ['http', 'https', 'ftp']:
+                                link = Link(log, tmp.geturl())
+                                Session.add(link)
+                                Session.commit()
 
                     if string.split(msg)[0] == "$$":
                         s.send("%s\r\n" % " ".join(string.split(msg)[1:]))
