@@ -13,9 +13,10 @@ Session = scoped_session(sessionmaker(Engine))
 class Log(Base):
     __tablename__ = 'irc_logs'
 
-    id = Column('log_id', Integer, primary_key=True, index=True)
+    id = Column('id', Integer, primary_key=True, index=True)
     nick = Column('nick', String(50), nullable=False)
-    channel = Column('channel', String(100), index=True)
+    channel_id = Column('channel_id', String(100), ForeignKey('irc_channels.id'), index=True)
+    channel = relationship('Channel')
     message = Column('message', Text)
     created_at = Column('created_at', DateTime, nullable=False, default=datetime.now())
 
@@ -31,8 +32,8 @@ class Log(Base):
 class Link(Base):
     __tablename__ = 'irc_links'
 
-    id = Column('link_id', Integer, primary_key=True, index=True)
-    log_id = Column('log_id', Integer, ForeignKey('irc_logs.log_id'))
+    id = Column('id', Integer, primary_key=True, index=True)
+    log_id = Column('log_id', Integer, ForeignKey('irc_logs.id'))
     log = relationship('Log')
     url = Column('url', String(255), nullable=True)
 
@@ -44,4 +45,18 @@ class Link(Base):
         return u'<Link %r>' % self.url
 
 
-Base.metadata.create_all()
+class Channel(Base):
+    __tablename__ = 'irc_channels'
+
+    id = Column('id', Integer, primary_key=True, index=True)
+    name = Column('name', String(100), unique=True, nullable=False, index=True)
+
+    def __init__(self, channel):
+        self.name = channel
+
+    def __repr__(self):
+        return u'<Channel %r>' % self.name
+
+
+if __name__ == '__main__':
+    Base.metadata.create_all()
