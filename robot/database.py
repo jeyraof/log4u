@@ -1,3 +1,5 @@
+# -*- coding: utf-8 -*-
+
 from sqlalchemy import create_engine, Column, Integer, String, DateTime, Text, ForeignKey
 from sqlalchemy.orm import sessionmaker, scoped_session, relationship
 from sqlalchemy.ext.declarative import declarative_base
@@ -10,20 +12,34 @@ Base = declarative_base(bind=Engine)
 Session = scoped_session(sessionmaker(Engine))
 
 
+class Channel(Base):
+    __tablename__ = 'irc_channels'
+
+    id = Column('id', Integer, primary_key=True, index=True)
+    name = Column('name', String(100), unique=True, nullable=False, index=True)
+
+    def __init__(self, channel):
+        self.name = channel
+
+    def __repr__(self):
+        return u'<Channel %r>' % self.name
+
+
 class Log(Base):
     __tablename__ = 'irc_logs'
 
     id = Column('id', Integer, primary_key=True, index=True)
     nick = Column('nick', String(50), nullable=False)
-    channel_id = Column('channel_id', String(100), ForeignKey('irc_channels.id'), index=True)
+    channel_id = Column('channel_id', Integer, ForeignKey('irc_channels.id'), index=True)
     channel = relationship('Channel')
     message = Column('message', Text)
     created_at = Column('created_at', DateTime, nullable=False, default=datetime.now())
 
-    def __init__(self, nick, channel, message):
+    def __init__(self, nick, channel_id, message, created_at):
         self.nick = nick
-        self.channel = channel
+        self.channel_id = channel_id
         self.message = message
+        self.created_at = created_at
 
     def __repr__(self):
         return u'<Log %r at. %s>' % (self.nick, self.created_at)
@@ -43,19 +59,6 @@ class Link(Base):
 
     def __repr__(self):
         return u'<Link %r>' % self.url
-
-
-class Channel(Base):
-    __tablename__ = 'irc_channels'
-
-    id = Column('id', Integer, primary_key=True, index=True)
-    name = Column('name', String(100), unique=True, nullable=False, index=True)
-
-    def __init__(self, channel):
-        self.name = channel
-
-    def __repr__(self):
-        return u'<Channel %r>' % self.name
 
 
 if __name__ == '__main__':

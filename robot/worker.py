@@ -1,6 +1,7 @@
 # -*- coding: utf-8 -*-
 
-from database import Log, Link
+from database import Session, Channel, Log, Link
+from datetime import datetime
 
 import socket
 import string
@@ -9,17 +10,23 @@ import string
 config = {
     'HOST': "irc.ozinger.org",  # Host of irc server
     'PORT': 6667,  # Port to connection
-    'IDEN': "",  # Identity
-    'REAL': "",  # Real name
-    'NICK': "",  # Nick name
-    'CHAN': ["#freyja"],  # Auto join channel list (add prefix '#' to channel name)
+    'IDEN': "jaeyounglee",  # Identity
+    'REAL': "jaeyoung lee",  # Real name
+    'NICK': "jybot",  # Nick name
+    'CHAN': [],  # Auto join channel list (add prefix '#' to channel name)
     'NSRV': "Nickserv",  # Nick service bot Nick name
     'NSID': "",  # Nick service auth ID
     'NPWD': "",  # Nick service auth Password
 }
 
 
-def main():
+def run():
+    channels = Session.query(Channel).all()
+    channel_map = {}
+    for channel in channels:
+        config['CHAN'].append(channel.name)
+        channel_map[channel.name] = channel.id
+
     s = None
     try:
         s = socket.socket()
@@ -75,9 +82,11 @@ def main():
                     msg = " ".join(line[3:])[1:]  # Message
 
                     if obj == config['NICK']:
-                        print "(Query) <%s> %s" % (sender, msg)  # When message was direct query
+                        pass
                     else:
-                        print "(%s) <%s> %s" % (obj, sender, msg)  # When message happened in channels
+                        log = Log(sender, channel_map[obj], msg, datetime.now())
+                        Session.add(log)
+                        Session.commit()
 
                     if string.split(msg)[0] == "$$":
                         s.send("%s\r\n" % " ".join(string.split(msg)[1:]))
@@ -87,4 +96,4 @@ def main():
 
 
 if __name__ == "__main__":
-    main()
+    run()
