@@ -4,7 +4,7 @@ from sqlalchemy import create_engine, Column, Integer, String, DateTime, Text, F
 from sqlalchemy.orm import sessionmaker, scoped_session, relationship
 from sqlalchemy.ext.declarative import declarative_base
 
-from datetime import datetime
+from datetime import datetime, timedelta
 from config import MYSQL_URI
 
 Engine = create_engine(MYSQL_URI)
@@ -33,7 +33,7 @@ class Log(Base):
     channel_id = Column('channel_id', Integer, ForeignKey('irc_channels.id'), index=True)
     channel = relationship('Channel')
     message = Column('message', Text)
-    created_at = Column('created_at', DateTime, nullable=False, default=datetime.now())
+    created_at = Column('created_at', DateTime, nullable=False, default=datetime.now() + timedelta(hours=9))
 
     def __init__(self, nick, channel_id, message, created_at):
         self.nick = nick
