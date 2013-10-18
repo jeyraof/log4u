@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 
 from sqlalchemy import create_engine, ForeignKey, Column, Integer, String, DateTime, Text, Boolean
-from sqlalchemy.orm import sessionmaker, scoped_session, relationship
+from sqlalchemy.orm import sessionmaker, scoped_session, relationship, backref
 from sqlalchemy.ext.declarative import declarative_base
 
 from datetime import datetime, timedelta
@@ -51,7 +51,7 @@ class Link(Base):
 
     id = Column('id', Integer, primary_key=True, index=True)
     log_id = Column('log_id', Integer, ForeignKey('irc_logs.id'))
-    log = relationship('Log')
+    log = relationship('Log', backref=backref('links', order_by=id))
     url = Column('url', String(255), nullable=True)
 
     def __init__(self, log, url):
