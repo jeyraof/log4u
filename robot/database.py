@@ -7,7 +7,7 @@ from sqlalchemy.ext.declarative import declarative_base
 from datetime import datetime
 from config import MYSQL_URI
 
-Engine = create_engine(MYSQL_URI, echo=True)
+Engine = create_engine(MYSQL_URI)
 Base = declarative_base(bind=Engine)
 Session = scoped_session(sessionmaker(Engine))
 
