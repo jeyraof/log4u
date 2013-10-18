@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 
-from sqlalchemy import create_engine, Column, Integer, String, DateTime, Text, ForeignKey
+from sqlalchemy import create_engine, ForeignKey, Column, Integer, String, DateTime, Text, Boolean
 from sqlalchemy.orm import sessionmaker, scoped_session, relationship
 from sqlalchemy.ext.declarative import declarative_base
 
@@ -17,6 +17,7 @@ class Channel(Base):
 
     id = Column('id', Integer, primary_key=True, index=True)
     name = Column('name', String(100), unique=True, nullable=False, index=True)
+    visible = Column('visible', Boolean, default=False)
 
     def __init__(self, channel):
         self.name = channel
