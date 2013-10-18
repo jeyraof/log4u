@@ -53,7 +53,7 @@ def main():
                     flag = False  # Loop break
 
         # Operate whenever socket received
-        while True:
+        while 1:
             buf = buf + s.recv(1024)
             tmp = string.split(buf, "\n")
             buf = tmp.pop()
