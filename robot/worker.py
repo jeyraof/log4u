@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 
 from database import Session, Channel, Log, Link
-from datetime import datetime, timedelta
+from datetime import datetime
 from urlparse import urlparse
 
 import socket
@@ -78,7 +78,7 @@ def run():
                     if obj == config['NICK']:
                         pass
                     else:
-                        log = Log(sender, channel_map[obj], msg, datetime.now() + timedelta(hours=9))
+                        log = Log(sender, channel_map[obj], msg, datetime.now())
                         Session.add(log)
                         Session.commit()
 
