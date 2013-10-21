@@ -89,9 +89,6 @@ def run():
                                 Session.add(link)
                                 Session.commit()
 
-                    if string.split(msg)[0] == "$$":
-                        s.send("%s\r\n" % " ".join(string.split(msg)[1:]))
-
     finally:
         s.close()
 
